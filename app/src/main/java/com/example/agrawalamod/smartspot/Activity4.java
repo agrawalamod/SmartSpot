@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -60,16 +61,27 @@ public class Activity4 extends AppCompatActivity {
     }
     View.OnClickListener myhandler1 = new View.OnClickListener() {
         public void onClick(View v) {
-            // it was the 1st button
-            //wifiApManager.setHotspotSettings("MC Demo", "testtest");
-            //wifiApManager.setWifiApEnabled(true);
-            //wifiApManager.viewHotspotSettings();
+
+            System.out.println("Button pressed");
+            wifiApManager.setHotspotSettings("MC Demo", "testtest");
+            if(wifiApManager.setWifiApEnabled(true))
+            {
+                System.out.println("WiFi Hotspot Started");
+                Toast.makeText(getApplicationContext(), "Portable Hotspot started", Toast.LENGTH_LONG).show();
+            }
+            wifiApManager.viewHotspotSettings();
+            scan();
         }
     };
     View.OnClickListener myhandler2 = new View.OnClickListener() {
         public void onClick(View v) {
-            // it was the 1st button
-            wifiApManager.setWifiApEnabled(false);
+
+            if(wifiApManager.setWifiApEnabled(false))
+            {
+                System.out.println("WiFi Hotspot Stopped");
+                Toast.makeText(getApplicationContext(), "Portable Hotspot stopped", Toast.LENGTH_LONG).show();
+
+            }
 
         }
     };

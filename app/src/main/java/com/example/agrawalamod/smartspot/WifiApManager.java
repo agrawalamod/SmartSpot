@@ -2,6 +2,7 @@ package com.example.agrawalamod.smartspot;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -17,26 +18,51 @@ import android.util.Log;
  */
 public class WifiApManager
 {
-    private final WifiManager mWifiManager;
-    private Context context;
-    private WifiConfiguration wifiConfig;
+    public static WifiManager mWifiManager=null;
+    public Context context;
+    public static WifiConfiguration wifiConfig=null;
 
     public WifiApManager(Context context) {
         this.context = context;
         mWifiManager = (WifiManager) this.context.getSystemService(Context.WIFI_SERVICE);
-        
+
+        Method getConfigMethod = null;
+        try
+        {
+            getConfigMethod = mWifiManager.getClass().getMethod("getWifiApConfiguration");
+
+        } catch (NoSuchMethodException e)
+        {
+            e.printStackTrace();
+            System.out.println("Couldn't get Configuration");
+        }
+        try
+        {
+            this.wifiConfig = (WifiConfiguration) getConfigMethod.invoke(mWifiManager);
+        } catch (IllegalAccessException e)
+        {
+            System.out.println("Can't be accessed");
+            e.printStackTrace();
+        } catch (InvocationTargetException e)
+        {
+            e.printStackTrace();
+            System.out.println("Function can't be invoked");
+        }
+
     }
 
     public void setHotspotSettings(String SSID, String password)
     {
         this.wifiConfig.SSID = SSID;
         this.wifiConfig.preSharedKey = password;
+        setWifiApConfiguration(wifiConfig);
+
     }
     public void viewHotspotSettings()
     {
-        WifiConfiguration wifiConfigCurrent = wifiConfig;
-        System.out.println(wifiConfigCurrent.SSID);
-        System.out.println(wifiConfigCurrent.preSharedKey);
+        WifiConfiguration wifiConfigCurrent = getWifiApConfiguration();
+        System.out.println("SSID is " + wifiConfigCurrent.SSID);
+        System.out.println("Password is" + wifiConfigCurrent.preSharedKey);
     }
 
     /**
@@ -45,19 +71,19 @@ public class WifiApManager
      * AP mode, update the new configuration
      * Note that starting in access point mode disables station
      * mode operation
-     * @param wifiConfig SSID, security and channel details as part of WifiConfiguration
+     * wifiConfig SSID, security and channel details as part of WifiConfiguration
      * @return {@code true} if the operation succeeds, {@code false} otherwise
      */
 
 
-    public boolean setWifiApEnabled(boolean enabled) {
+    public boolean setWifiApEnabled( boolean enabled) {
         try {
             if (enabled) { // disable WiFi in any case
                 mWifiManager.setWifiEnabled(false);
             }
 
             Method method = mWifiManager.getClass().getMethod("setWifiApEnabled", WifiConfiguration.class, boolean.class);
-            return (Boolean) method.invoke(mWifiManager, wifiConfig, enabled);
+            return (Boolean) method.invoke(mWifiManager, this.wifiConfig, enabled);
         } catch (Exception e) {
             Log.e(this.getClass().toString(), "", e);
             return false;
