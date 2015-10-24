@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:text="Start Hotspot"
         android:id="@+id/button3"
-        android:layout_centerVertical="true"
+        android:layout_above="@+id/button4"
         android:layout_alignStart="@+id/button4" />
 
     <Button
@@ -21,26 +21,27 @@
         android:layout_height="wrap_content"
         android:text="Stop   Hotspot"
         android:id="@+id/button4"
-        android:layout_below="@+id/button3"
-        android:layout_centerHorizontal="true" />
+        android:layout_above="@+id/button6"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="39dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="New Text"
         android:id="@+id/resultView"
-        android:layout_above="@+id/button3"
+        android:layout_below="@+id/textView3"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="114dp" />
+        android:layout_marginTop="83dp" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="CONNECTED CLIENTS"
         android:id="@+id/button6"
-        android:layout_below="@+id/button4"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="86dp" />
+        android:layout_marginBottom="32dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -50,4 +51,25 @@
         android:id="@+id/textView3"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ssid"
+        android:layout_marginTop="88dp"
+        android:text="SSID"
+        android:layout_below="@+id/resultView"
+        android:layout_alignStart="@+id/passkey"
+        android:layout_alignEnd="@+id/passkey" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/passkey"
+        android:layout_below="@+id/ssid"
+        android:layout_marginTop="29dp"
+        android:text="Passkey"
+        android:layout_alignStart="@+id/button6"
+        android:layout_alignEnd="@+id/button6" />
+
 </RelativeLayout>

@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +25,8 @@ public class Activity4 extends AppCompatActivity {
     Button stopHotspot;
     Button clients;
     Activity4 activity;
+    EditText ssid;
+    EditText passkey;
 
     /** Called when the activity is first created. */
     @Override
@@ -35,6 +38,8 @@ public class Activity4 extends AppCompatActivity {
         startHotspot = (Button) findViewById(R.id.button3);
         stopHotspot = (Button) findViewById(R.id.button4);
         clients = (Button) findViewById(R.id.button6);
+        ssid = (EditText) findViewById(R.id.ssid);
+        passkey = (EditText) findViewById(R.id.passkey);
 
         startHotspot.setOnClickListener(myhandler1);
         stopHotspot.setOnClickListener(myhandler2);
@@ -58,14 +63,25 @@ public class Activity4 extends AppCompatActivity {
         public void onClick(View v) {
 
             System.out.println("Button pressed");
-            wifiApManager.setHotspotSettings("MC Demo", "testtest");
-            if(wifiApManager.setWifiApEnabled(true))
-            {
-                System.out.println("WiFi Hotspot Started");
-                Toast.makeText(getApplicationContext(), "Portable Hotspot started", Toast.LENGTH_LONG).show();
-                textView1.setText("Hotspot is running");
+            String networkName = ssid.getText().toString();
+            String password = passkey.getText().toString();
+            if(password.length() >=8) {
+                if(!wifiApManager.isWifiApEnabled())
+                {
+
+                    wifiApManager.setHotspotSettings(networkName, password);
+                    if (wifiApManager.setWifiApEnabled(true)) {
+                        System.out.println("WiFi Hotspot Started");
+                        Toast.makeText(getApplicationContext(), "Portable Hotspot started", Toast.LENGTH_LONG).show();
+                        textView1.setText("Hotspot is running");
+                    }
+                    wifiApManager.viewHotspotSettings();
+                }
             }
-            wifiApManager.viewHotspotSettings();
+            else
+            {
+                Toast.makeText(getApplicationContext(), "WPA Passkey must be atleast 8 characters", Toast.LENGTH_LONG).show();
+            }
 
         }
     };
