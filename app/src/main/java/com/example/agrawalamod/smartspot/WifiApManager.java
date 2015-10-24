@@ -24,6 +24,7 @@ public class WifiApManager
     public WifiApManager(Context context) {
         this.context = context;
         mWifiManager = (WifiManager) this.context.getSystemService(Context.WIFI_SERVICE);
+        
     }
 
     public void setHotspotSettings(String SSID, String password)
