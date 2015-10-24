@@ -2,6 +2,7 @@ package com.example.agrawalamod.smartspot;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
@@ -78,16 +79,20 @@ public class WifiApManager
 
     public boolean setWifiApEnabled( boolean enabled) {
         try {
-            if (enabled) { // disable WiFi in any case
-                mWifiManager.setWifiEnabled(false);
-            }
 
-            Method method = mWifiManager.getClass().getMethod("setWifiApEnabled", WifiConfiguration.class, boolean.class);
-            return (Boolean) method.invoke(mWifiManager, this.wifiConfig, enabled);
+                if (enabled) { // disable WiFi in any case
+
+                    mWifiManager.setWifiEnabled(false);
+                }
+
+                Method method = mWifiManager.getClass().getMethod("setWifiApEnabled", WifiConfiguration.class, boolean.class);
+                return (Boolean) method.invoke(mWifiManager, this.wifiConfig, enabled);
+
         } catch (Exception e) {
             Log.e(this.getClass().toString(), "", e);
             return false;
         }
+
     }
 
     /**

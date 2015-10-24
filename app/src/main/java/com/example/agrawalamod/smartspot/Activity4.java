@@ -1,5 +1,6 @@
 package com.example.agrawalamod.smartspot;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,6 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Activity4 extends AppCompatActivity {
@@ -20,45 +22,38 @@ public class Activity4 extends AppCompatActivity {
     WifiApManager wifiApManager;
     Button startHotspot;
     Button stopHotspot;
+    Button clients;
+    Activity4 activity;
 
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_4);
+        activity = this;
 
         startHotspot = (Button) findViewById(R.id.button3);
         stopHotspot = (Button) findViewById(R.id.button4);
+        clients = (Button) findViewById(R.id.button6);
+
         startHotspot.setOnClickListener(myhandler1);
         stopHotspot.setOnClickListener(myhandler2);
+        clients.setOnClickListener(myhandler3);
 
         textView1 = (TextView) findViewById(R.id.resultView);
         wifiApManager = new WifiApManager(this);
-        //wifiApManager.setHotspotSettings("MC Demo", "testtest");
-        //wifiApManager.setWifiApEnabled(true);
-        //wifiApManager.viewHotspotSettings();
-        scan();
+        if(wifiApManager.isWifiApEnabled())
+        {
+            textView1.setText("Hotspot is running");
+        }
+        else
+        {
+            textView1.setText("Hotspot is not running");
+        }
 
     }
 
-    private void scan() {
-        wifiApManager.getClientList(false, new FinishScanListener() {
 
-            @Override
-            public void onFinishScan(final ArrayList<ClientScanResult> clients) {
-
-                textView1.setText("WifiApState: " + wifiApManager.getWifiApState() + "\n\n");
-                textView1.append("Clients: \n");
-                for (ClientScanResult clientScanResult : clients) {
-                    textView1.append("####################\n");
-                    textView1.append("IpAddr: " + clientScanResult.getIpAddr() + "\n");
-                    textView1.append("Device: " + clientScanResult.getDevice() + "\n");
-                    textView1.append("HWAddr: " + clientScanResult.getHWAddr() + "\n");
-                    textView1.append("isReachable: " + clientScanResult.isReachable() + "\n");
-                }
-            }
-        });
-    }
     View.OnClickListener myhandler1 = new View.OnClickListener() {
         public void onClick(View v) {
 
@@ -68,9 +63,10 @@ public class Activity4 extends AppCompatActivity {
             {
                 System.out.println("WiFi Hotspot Started");
                 Toast.makeText(getApplicationContext(), "Portable Hotspot started", Toast.LENGTH_LONG).show();
+                textView1.setText("Hotspot is running");
             }
             wifiApManager.viewHotspotSettings();
-            scan();
+
         }
     };
     View.OnClickListener myhandler2 = new View.OnClickListener() {
@@ -80,8 +76,17 @@ public class Activity4 extends AppCompatActivity {
             {
                 System.out.println("WiFi Hotspot Stopped");
                 Toast.makeText(getApplicationContext(), "Portable Hotspot stopped", Toast.LENGTH_LONG).show();
+                textView1.setText("Hotspot is not running");
 
             }
+
+        }
+    };
+    View.OnClickListener myhandler3 = new View.OnClickListener() {
+        public void onClick(View v) {
+
+            Intent intent = new Intent(activity, ConnectedClients.class);
+            startActivity(intent);
 
         }
     };
