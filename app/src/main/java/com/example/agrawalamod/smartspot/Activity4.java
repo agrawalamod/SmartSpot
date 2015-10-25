@@ -24,6 +24,7 @@ public class Activity4 extends AppCompatActivity {
     Button startHotspot;
     Button stopHotspot;
     Button clients;
+    Button gpsConnect; //Button is currently redundant. I shifted the geofencing stuff into the mainactivity, so it handles both Google login and Geofencing
     Activity4 activity;
     EditText ssid;
     EditText passkey;
@@ -38,12 +39,14 @@ public class Activity4 extends AppCompatActivity {
         startHotspot = (Button) findViewById(R.id.button3);
         stopHotspot = (Button) findViewById(R.id.button4);
         clients = (Button) findViewById(R.id.button6);
+        gpsConnect = (Button) findViewById(R.id.button7);
         ssid = (EditText) findViewById(R.id.ssid);
         passkey = (EditText) findViewById(R.id.passkey);
 
         startHotspot.setOnClickListener(myhandler1);
         stopHotspot.setOnClickListener(myhandler2);
         clients.setOnClickListener(myhandler3);
+        gpsConnect.setOnClickListener(myhandler4);
 
         textView1 = (TextView) findViewById(R.id.resultView);
         wifiApManager = new WifiApManager(this);
@@ -108,7 +111,12 @@ public class Activity4 extends AppCompatActivity {
     };
 
 
+    View.OnClickListener myhandler4 = new View.OnClickListener() {
+        public void onClick(View v) {
 
+
+        }
+    };
 
 
 }
