@@ -45,12 +45,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     @Override
     public void onClick(View v)
     {
-        if (v.getId() == R.id.button) {
+        if (v.getId() == R.id.button2) {
             //Toast.makeText(getApplicationContext(), "Reaches Here", Toast.LENGTH_LONG).show();
             onSignOutClicked();
         }
 
-        if (v.getId() == R.id.button2) {
+        if (v.getId() == R.id.button) {
             onSignInClicked();
         }
     }
