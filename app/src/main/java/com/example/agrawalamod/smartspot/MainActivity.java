@@ -1,227 +1,89 @@
 package com.example.agrawalamod.smartspot;
 
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentSender;
-import android.location.Location;
-import android.location.LocationListener;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.SyncStateContract;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.Geofence;
-import com.google.android.gms.location.GeofencingRequest;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.plus.Plus;
+import com.google.android.gms.plus.model.people.Person;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+public class MainActivity extends AppCompatActivity
+        implements GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        View.OnClickListener
+{
+    private Person currentPerson;
+    private String personName;
+    private String personPhoto;
+    private String personGooglePlusProfile;
+    private String email;
 
 
-public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, View.OnClickListener, ResultCallback<Status> {
 
-    private GoogleApiClient mGoogleApiClient;
-
-    protected ArrayList<Geofence> mGeofenceList;
-    private boolean mGeofencesAdded;
-    private PendingIntent mGeofencePendingIntent;
-    public static final String extra="EXTRA";
-
-    @Override
-    public void onClick(View v)
-    {
-        if (v.getId() == R.id.button2) {
-            //Toast.makeText(getApplicationContext(), "Reaches Here", Toast.LENGTH_LONG).show();
-            onSignOutClicked();
-        }
-
-        if (v.getId() == R.id.button) {
-            onSignInClicked();
-        }
-    }
-
-    private boolean mIsResolving = false;
-    public static final String TAG = "MainActivity";
-    private boolean mShouldResolve = false;
     private static final int RC_SIGN_IN = 0;
-    String email;
+    private GoogleApiClient mGoogleApiClient;
+    /* Is there a ConnectionResult resolution in progress? */
+    private boolean mIsResolving = false;
+
+    /* Should we automatically resolve ConnectionResults when possible? */
+    private boolean mShouldResolve = false;
+    private String TAG;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        findViewById(R.id.button).setOnClickListener(this);
-        findViewById(R.id.button2).setOnClickListener(this);
 
+        // Build GoogleApiClient with access to basic profile
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(Plus.API)
-                .addApi(LocationServices.API)
                 .addScope(new Scope(Scopes.PROFILE))
                 .addScope(new Scope(Scopes.EMAIL))
                 .build();
 
-        mGeofencePendingIntent = null;
-        mGeofenceList = new ArrayList<Geofence>();
-        //buildGoogleApiClient();
-        populateGeofenceList();
-    }
 
-    protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-    }
+        Button button = (Button) findViewById(R.id.button);
+        button.setOnClickListener(this);
 
-    public void populateGeofenceList() {
+        Button button2 = (Button) findViewById(R.id.button2);
+        button2.setOnClickListener(this);
 
-        mGeofenceList.add(new Geofence.Builder()
-                .setRequestId("IIITD")
-                .setCircularRegion(
-                        28.544487,
-                        77.272619,
-                        100000
-                )
-                .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
-                        Geofence.GEOFENCE_TRANSITION_EXIT)
-                .build());
-    }
-
-    private GeofencingRequest getGeofencingRequest() {
-        GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
-        builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
-        builder.addGeofences(mGeofenceList);
-        return builder.build();
-    }
-
-    private PendingIntent getGeofencePendingIntent() {
-        if (mGeofencePendingIntent != null) {
-            return mGeofencePendingIntent;
-        }
-        Log.i(TAG, "Opening GeofenceActivity");
-        Intent intent = new Intent(this, Activity4.class);
-        email = Plus.AccountApi.getAccountName(mGoogleApiClient);
-        intent.putExtra(TAG, email);
-        startActivity(intent);
-
-        return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-    }
-
-    private void addGeofences() {
-        if (!mGoogleApiClient.isConnected()) {
-            Toast.makeText(this, "not_connected", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        try {
-            LocationServices.GeofencingApi.addGeofences(
-                    mGoogleApiClient,
-                    getGeofencingRequest(),
-                    getGeofencePendingIntent()
-            ).setResultCallback(this); // Result processed in onResult().
-        } catch (SecurityException securityException) {
-            logSecurityException(securityException);
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mGoogleApiClient.connect();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        mGoogleApiClient.disconnect();
-    }
-
-    @Override
-    public void onConnected(Bundle bundle) {
-
-        Log.d(TAG, "onConnected:" + bundle);
-        mShouldResolve = false;
-
-        email = Plus.AccountApi.getAccountName(mGoogleApiClient);
-
-        if(!email.toLowerCase().contains("@iiitd.ac.in")) {
-            Toast.makeText(getApplicationContext(), "Signed In: " + email, Toast.LENGTH_LONG).show();
-            Log.d(TAG, "Signed In");
-            addGeofences();
-            Log.i("MainActivity", "onConnect");
-        }
-        else {
-            onSignOutClicked();
-        }
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
 
     }
-
     private void onSignInClicked() {
+        // User clicked the sign-in button, so begin the sign-in process and automatically
+        // attempt to resolve any errors that occur.
         mShouldResolve = true;
         mGoogleApiClient.connect();
 
-        Toast.makeText(getApplicationContext(), "Signing In", Toast.LENGTH_LONG).show();
-        Log.d(TAG, "Signing in");
+        // Show a message to the user that we are signing in.
+        System.out.println("Signing in");
+        //mStatus.setText(R.string.signing_in);
     }
-
-    private void onSignOutClicked() {
-        if (mGoogleApiClient.isConnected()) {
-            Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
-            mGoogleApiClient.disconnect();
-
-            Toast.makeText(getApplicationContext(), "Signing Out", Toast.LENGTH_LONG).show();
-            Log.d(TAG, "Signing out");
-        }
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d(TAG, "onActivityResult:" + requestCode + ":" + resultCode + ":" + data);
 
         if (requestCode == RC_SIGN_IN) {
-
+            // If the error resolution was not successful we should not resolve further.
             if (resultCode != RESULT_OK) {
                 mShouldResolve = false;
             }
@@ -232,9 +94,110 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.d(TAG, "onConnectionFailed:" + connectionResult);
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mGoogleApiClient.connect();
+        System.out.println("OnStart");
+
+    }
+
+
+    @Override
+    protected void onStop() {
+        onSignOutClicked();
+        super.onStop();
+        mGoogleApiClient.disconnect();
+        System.out.println("OnStop");
+    }
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        System.out.println("OnDestroy");
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        System.out.println("Sign In: On Connected");
+        mShouldResolve = false;
+
+        // Show the signed-in UI
+
+        if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null)
+        {
+            currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+            personName = currentPerson.getDisplayName();
+            personPhoto = currentPerson.getImage().getUrl();
+            personGooglePlusProfile = currentPerson.getUrl();
+            email = Plus.AccountApi.getAccountName(mGoogleApiClient);
+            String iiitd = new String();
+            boolean isIIITD = contains(email, "@iiitd.ac.in");
+            System.out.println(email);
+            if(isIIITD)
+            {
+                System.out.println("Starting Activity 2");
+                Intent intent = new Intent(this, Activity2.class);
+                //intent.putExtra("email",email);
+                startActivity(intent);
+            }
+            else
+            {
+                onSignOutClicked();
+                System.out.print("Not IIITD ID");
+                Toast.makeText(getApplicationContext(), "Couldn't Sign In. This is not a IIIT-Delhi Account.", Toast.LENGTH_LONG).show();
+            }
+
+        }
+        else
+        {
+            System.out.println("This is null!!!");
+        }
+
+
+
+        //showSignedInUI();
+
+    }
+    public boolean contains( String haystack, String needle ) {
+        haystack = haystack == null ? "" : haystack;
+        needle = needle == null ? "" : needle;
+
+        // Works, but is not the best.
+        //return haystack.toLowerCase().indexOf( needle.toLowerCase() ) > -1
+
+        return haystack.toLowerCase().contains( needle.toLowerCase() );
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        System.out.println("Sign in: suspended");
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        // Toast.makeText(getApplicationContext(), "Couldn't Connect. Check Internet Connection.", Toast.LENGTH_LONG).show();
+        //System.out.println("Couldn't connect to Google");
         if (!mIsResolving && mShouldResolve) {
             if (connectionResult.hasResolution()) {
                 try {
@@ -245,48 +208,41 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     mIsResolving = false;
                     mGoogleApiClient.connect();
                 }
-            }
+            } else {
+                // Could not resolve the connection result, show the user an
+                // error dialog.
+                System.out.println("Couldn't Sign IN");
+                //Toast.makeText(getApplicationContext(), "Couldn't Connect. Check Internet Connection.", Toast.LENGTH_LONG).show();
 
-            else {
-
-                Log.d(TAG, "Could not resolve connection ");
+                //showErrorDialog(connectionResult);
             }
+        } else {
+            // Show the signed-out UI
+            //showSignedOutUI();
+            System.out.println("Signed out");
         }
 
-        else {
-
-            Toast.makeText(getApplicationContext(), "Signed Out", Toast.LENGTH_LONG).show();
-            Log.d(TAG, "Signed out");
+    }
+    private void onSignOutClicked() {
+        // Clear the default account so that GoogleApiClient will not automatically
+        // connect in the future.
+        if (mGoogleApiClient.isConnected()) {
+            Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
+            mGoogleApiClient.disconnect();
         }
-    }
 
-    private void logSecurityException(SecurityException securityException) {
-        Log.e("MainActivity", "You need to use ACCESS_FINE_LOCATION with geofences", securityException);
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-
+        //showSignedOutUI();
+        System.out.println("Sign Out Clicked");
     }
 
     @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
+    public void onClick(View v) {
+        if (v.getId() == R.id.button) {
+            onSignInClicked();
+        }
+        else if(v.getId() == R.id.button2) {
+            onSignOutClicked();
+        }
 
     }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
-    }
-
-    @Override
-    public void onResult(Status status) {
-
-    }
-
 }

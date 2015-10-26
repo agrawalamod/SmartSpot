@@ -1,27 +1,29 @@
 package com.example.agrawalamod.smartspot;
 
+import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Location;
-import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Result;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingEvent;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +31,8 @@ import java.util.List;
 public class Activity2 extends AppCompatActivity implements
         ResultCallback,
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener
+        GoogleApiClient.OnConnectionFailedListener,
+        GeofenceResultReceiver.Receiver
 {
 
     private GoogleApiClient mGoogleApiClient;
@@ -44,6 +47,12 @@ public class Activity2 extends AppCompatActivity implements
 
     /* Should we automatically resolve ConnectionResults when possible? */
     private boolean mShouldResolve = false;
+    TextView location;
+    TextView locationResult;
+    GeofenceResultReceiver GeofenceResult;
+    Button cont;
+    Activity activity;
+
 
 
     @Override
@@ -51,6 +60,14 @@ public class Activity2 extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_2);
         email = getIntent().getStringExtra("email");
+        location = (TextView) findViewById(R.id.textView12);
+        locationResult = (TextView) findViewById(R.id.textView13);
+        cont = (Button) findViewById(R.id.button7);
+
+        cont.setOnClickListener(myhandler);
+        GeofenceResult = new GeofenceResultReceiver(new Handler());
+        GeofenceResult.setReceiver(this);
+        activity = this;
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -143,24 +160,24 @@ public class Activity2 extends AppCompatActivity implements
         if (mGeofencePendingIntent != null) {
             return mGeofencePendingIntent;
         }
-        return mGeofencePendingIntent;
-        //Intent intent = new Intent(this, GeofenceTransitionsIntentService.class);
-        //intent.putExtra("email",email);
+        Intent intent = new Intent(this, GeofenceTransitionsIntentService.class);
+        intent.putExtra("email",email);
+        //intent.putExtra("GeofenceResult", GeofenceResult);
+        System.out.println("Service started");
         // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when
         // calling addGeofences() and removeGeofences().
-        //return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        return PendingIntent.getService(this, 0, intent, PendingIntent.
+                FLAG_UPDATE_CURRENT);
     }
 
 
 
-/*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.activity_2, menu);
+        //getMenuInflater().inflate(R.menu.menu_activity2, menu);
         return true;
     }
-    */
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -192,12 +209,19 @@ public class Activity2 extends AppCompatActivity implements
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
         System.out.println("API Location Services Connected!");
+        System.out.print("Last Location: ");
+        Double Lat = mLastLocation.getLatitude();
+        Double Long = mLastLocation.getLongitude();
+        location.setText(Lat.toString() + ", " + Long.toString());
+        System.out.print(mLastLocation.getLatitude());
+        System.out.print(", ");
+        System.out.println(mLastLocation.getLongitude());
+
         createGeofence();
         addGeofences();
 
         mGeofencePendingIntent = getGeofencePendingIntent();
     }
-
 
 
     @Override
@@ -248,5 +272,30 @@ public class Activity2 extends AppCompatActivity implements
             mGoogleApiClient.connect();
         }
     }
+    View.OnClickListener myhandler = new View.OnClickListener() {
+        public void onClick(View v) {
+            Intent launchActivity4 = new Intent(activity, Activity4.class);
+            startActivity(launchActivity4);
 
+
+
+        }
+    };
+
+    @Override
+    public void onReceiveResult(int resultCode, Bundle resultData) {
+
+        System.out.println("onReceive Result");
+
+        if(resultData.getBoolean("isInside")==true)
+        {
+            locationResult.setText("You were found inside Geofence");
+        }
+        else if(resultData.getBoolean("isInside") == false)
+        {
+            locationResult.setText("You were found outside Geofence");
+
+        }
+
+    }
 }

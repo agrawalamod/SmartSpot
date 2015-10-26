@@ -66,15 +66,6 @@ public class WifiApManager
         System.out.println("Password is" + wifiConfigCurrent.preSharedKey);
     }
 
-    /**
-     * Start AccessPoint mode with the specified
-     * configuration. If the radio is already running in
-     * AP mode, update the new configuration
-     * Note that starting in access point mode disables station
-     * mode operation
-     * wifiConfig SSID, security and channel details as part of WifiConfiguration
-     * @return {@code true} if the operation succeeds, {@code false} otherwise
-     */
 
 
     public boolean setWifiApEnabled( boolean enabled) {
@@ -95,11 +86,7 @@ public class WifiApManager
 
     }
 
-    /**
-     * Gets the Wi-Fi enabled state.
-     * @return {@link WIFI_AP_STATE}
-     * @see #isWifiApEnabled()
-     */
+
     public WIFI_AP_STATE getWifiApState() {
         try {
             Method method = mWifiManager.getClass().getMethod("getWifiApState");
@@ -118,21 +105,12 @@ public class WifiApManager
         }
     }
 
-    /**
-     * Return whether Wi-Fi AP is enabled or disabled.
-     * @return {@code true} if Wi-Fi AP is enabled
-     * @see #getWifiApState()
-     *
-     * @hide Dont open yet
-     */
+
     public boolean isWifiApEnabled() {
         return getWifiApState() == WIFI_AP_STATE.WIFI_AP_STATE_ENABLED;
     }
 
-    /**
-     * Gets the Wi-Fi AP Configuration.
-     * @return AP details in {@link WifiConfiguration}
-     */
+
     public WifiConfiguration getWifiApConfiguration() {
         try {
             Method method = mWifiManager.getClass().getMethod("getWifiApConfiguration");
@@ -143,10 +121,7 @@ public class WifiApManager
         }
     }
 
-    /**
-     * Sets the Wi-Fi AP Configuration.
-     * @return {@code true} if the operation succeeded, {@code false} otherwise
-     */
+
     public boolean setWifiApConfiguration(WifiConfiguration wifiConfig) {
         try {
             Method method = mWifiManager.getClass().getMethod("setWifiApConfiguration", WifiConfiguration.class);
@@ -157,21 +132,12 @@ public class WifiApManager
         }
     }
 
-    /**
-     * Gets a list of the clients connected to the Hotspot, reachable timeout is 300
-     * @param onlyReachables {@code false} if the list should contain unreachable (probably disconnected) clients, {@code true} otherwise
-     * @param finishListener, Interface called when the scan method finishes
-     */
+
     public void getClientList(boolean onlyReachables, FinishScanListener finishListener) {
         getClientList(onlyReachables, 300, finishListener );
     }
 
-    /**
-     * Gets a list of the clients connected to the Hotspot
-     * @param onlyReachables {@code false} if the list should contain unreachable (probably disconnected) clients, {@code true} otherwise
-     * @param reachableTimeout Reachable Timout in miliseconds
-     * @param finishListener, Interface called when the scan method finishes
-     */
+
     public void getClientList(final boolean onlyReachables, final int reachableTimeout, final FinishScanListener finishListener) {
 
 
