@@ -29,4 +29,10 @@ android:layout_height="wrap_content">
     <TextView android:id="@+id/delta_rx" android:gravity="right" android:layout_marginRight="@dimen/margin_right" android:textSize="20sp"/>
     <TextView android:id="@+id/delta_tx" android:gravity="right" android:textSize="20sp"/>
 </TableRow>
+    <TableRow>
+        <TextView
+            android:gravity="right" android:text="Total"
+            android:textStyle="bold" android:layout_marginRight="@dimen/margin_right" android:textSize="20sp"/>
+        <TextView android:id="@+id/total" android:gravity="right" android:layout_marginRight="@dimen/margin_right" android:textSize="20sp"/>
+    </TableRow>
 </TableLayout>

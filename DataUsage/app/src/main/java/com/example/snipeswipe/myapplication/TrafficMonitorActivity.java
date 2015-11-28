@@ -10,6 +10,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.LogRecord;
 
 public class TrafficMonitorActivity extends Activity {
@@ -19,11 +21,13 @@ public class TrafficMonitorActivity extends Activity {
     TextView previous_tx=null;
     TextView delta_rx=null;
     TextView delta_tx=null;
+    TextView total=null;
 
     Button button=null;
 
     TrafficSnapshot latest=null;
     TrafficSnapshot previous=null;
+    double tot=0;
 
     final Handler handler = new Handler();
 
@@ -38,6 +42,8 @@ public class TrafficMonitorActivity extends Activity {
         previous_tx=(TextView)findViewById(R.id.previous_tx);
         delta_rx=(TextView)findViewById(R.id.delta_rx);
         delta_tx=(TextView)findViewById(R.id.delta_tx);
+        total=(TextView)findViewById(R.id.total);
+
         button=(Button) findViewById(R.id.button);
 
         takeSnapshot(null);
@@ -47,10 +53,41 @@ public class TrafficMonitorActivity extends Activity {
 //            public void run() {
 //                //Do something after 100ms
 //                button.performClick();
+//                button.callOnClick();
+//                button.invalidate();
 //                Log.d("TrafficMonitor", "Automated Running");
 //
 //            }
 //        }, 500);
+
+//        Timer t = new Timer();
+//        t.schedule(new TimerTask() {
+//            public void run() {
+//                handler.post(new Runnable() {
+//                    public void run() {
+//                        Log.i("TrafficMonitor", "Started Automated");
+//
+//                        button.performClick();
+//                        Log.i("TrafficMonitor", "Automated");
+//                    }
+//                });
+//            }
+//        }, 1000);
+        buttonFunction();
+
+    }
+
+    public void buttonFunction(){
+        button.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                takeSnapshot(v);
+
+            }
+
+        });
     }
 
 
@@ -68,6 +105,9 @@ public class TrafficMonitorActivity extends Activity {
 
             delta_rx.setText(String.valueOf(latest.device.rx-previous.device.rx));
             delta_tx.setText(String.valueOf(latest.device.tx-previous.device.tx));
+
+            tot=tot+latest.device.rx-previous.device.rx+latest.device.tx-previous.device.tx;
+            total.setText(String.valueOf(tot));
         }
 
         ArrayList<String> log=new ArrayList<String>();
