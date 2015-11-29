@@ -1,11 +1,13 @@
 package com.example.snipeswipe.myapplication;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,6 +30,7 @@ public class TrafficMonitorActivity extends Activity {
     TrafficSnapshot latest=null;
     TrafficSnapshot previous=null;
     double tot=0;
+    int count = 100;
 
     final Handler handler = new Handler();
 
@@ -46,35 +49,50 @@ public class TrafficMonitorActivity extends Activity {
 
         button=(Button) findViewById(R.id.button);
 
-        takeSnapshot(null);
+        takeSnapshot();
 
 //        handler.postDelayed(new Runnable() {
 //            @Override
 //            public void run() {
 //                //Do something after 100ms
 //                button.performClick();
-//                button.callOnClick();
-//                button.invalidate();
+//
 //                Log.d("TrafficMonitor", "Automated Running");
 //
 //            }
 //        }, 500);
 
-//        Timer t = new Timer();
-//        t.schedule(new TimerTask() {
-//            public void run() {
-//                handler.post(new Runnable() {
-//                    public void run() {
-//                        Log.i("TrafficMonitor", "Started Automated");
-//
-//                        button.performClick();
-//                        Log.i("TrafficMonitor", "Automated");
-//                    }
-//                });
-//            }
-//        }, 1000);
         buttonFunction();
 
+         //Declare as inatance variable
+
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        final Toast toast = Toast.makeText(
+                                getApplicationContext(), tot + "",
+                                Toast.LENGTH_SHORT);
+                        toast.show();
+                        takeSnapshot();
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                toast.cancel();
+                            }
+                        }, 1000);
+
+                    }
+                });
+            }
+        }, 0, 1000);
     }
 
     public void buttonFunction(){
@@ -83,8 +101,9 @@ public class TrafficMonitorActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                takeSnapshot(v);
-
+                takeSnapshot();
+                //startService(new Intent(getBaseContext(), TrafficService.class));
+                //stopService(new Intent(getBaseContext(), TrafficService.class));
             }
 
         });
@@ -92,7 +111,7 @@ public class TrafficMonitorActivity extends Activity {
 
 
 
-    public void takeSnapshot(View v) {
+    public void takeSnapshot() {
         previous=latest;
         latest=new TrafficSnapshot(this);
 
@@ -106,7 +125,7 @@ public class TrafficMonitorActivity extends Activity {
             delta_rx.setText(String.valueOf(latest.device.rx-previous.device.rx));
             delta_tx.setText(String.valueOf(latest.device.tx-previous.device.tx));
 
-            tot=tot+latest.device.rx-previous.device.rx+latest.device.tx-previous.device.tx;
+            tot=tot+latest.device.rx-previous.device.rx+latest.device.tx - previous.device.tx;
             total.setText(String.valueOf(tot));
         }
 
