@@ -65,6 +65,17 @@ public class WifiApManager
         System.out.println("SSID is " + wifiConfigCurrent.SSID);
         System.out.println("Password is" + wifiConfigCurrent.preSharedKey);
     }
+    public String getSSID()
+    {
+        WifiConfiguration wifiConfigCurrent = getWifiApConfiguration();
+        return wifiConfigCurrent.SSID;
+    }
+    public String getPasskey()
+    {
+        WifiConfiguration wifiConfigCurrent = getWifiApConfiguration();
+        return wifiConfigCurrent.preSharedKey;
+
+    }
 
 
 

@@ -14,25 +14,25 @@
         android:text="Start Hotspot"
         android:id="@+id/button3"
         android:layout_above="@+id/button4"
-        android:layout_alignStart="@+id/button4" />
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Stop   Hotspot"
         android:id="@+id/button4"
-        android:layout_above="@+id/button6"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="39dp" />
+        android:layout_above="@+id/configure"
+        android:layout_alignEnd="@+id/button3"
+        android:layout_marginBottom="20dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="New Text"
         android:id="@+id/resultView"
+        android:layout_marginTop="36dp"
         android:layout_below="@+id/textView3"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="83dp" />
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:layout_width="wrap_content"
@@ -52,24 +52,49 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
-    <EditText
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/ssid"
-        android:layout_marginTop="88dp"
-        android:text="SSID"
-        android:layout_below="@+id/resultView"
-        android:layout_alignStart="@+id/passkey"
-        android:layout_alignEnd="@+id/passkey" />
+        android:text="New Button"
+        android:id="@+id/button8"
+        android:layout_above="@+id/button6"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="417dp" />
 
-    <EditText
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/passkey"
-        android:layout_below="@+id/ssid"
-        android:layout_marginTop="29dp"
-        android:text="Passkey"
-        android:layout_alignStart="@+id/button6"
-        android:layout_alignEnd="@+id/button6" />
+        android:text="Configure"
+        android:id="@+id/configure"
+        android:layout_above="@+id/button6"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SSID: Configure in Settings"
+        android:id="@+id/textView16"
+        android:layout_marginTop="51dp"
+        android:layout_below="@+id/resultView"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Passkey: Configure in Settings"
+        android:id="@+id/textView17"
+        android:layout_marginTop="15dp"
+        android:layout_below="@+id/textView16"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Data Usage: 0.00 MB"
+        android:id="@+id/dataUsage"
+        android:layout_above="@+id/button3"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="55dp" />
 
 </RelativeLayout>

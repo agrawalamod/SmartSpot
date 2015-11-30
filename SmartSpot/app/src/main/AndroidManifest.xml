@@ -13,6 +13,7 @@
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
@@ -23,8 +24,8 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -32,21 +33,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activity2"
-            android:label="@string/title_activity_2"
-            android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.agrawalamod.smartspot.MainActivity" />
-        </activity>
-        <activity
             android:name=".Activity4"
             android:label="@string/title_activity_4"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.agrawalamod.smartspot.MainActivity" />
@@ -55,8 +46,8 @@
             android:name=".ConnectedClients"
             android:label="@string/title_activity_connected_clients"
             android:parentActivityName=".Activity4"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.agrawalamod.smartspot.Activity4" />
@@ -66,6 +57,15 @@
             android:name=".GeofenceTransitionsIntentService"
             android:exported="false" >
         </service>
+
+        <activity android:name=".WiFiConfigurationActivity" >
+        </activity>
+        <activity android:name=".GeofenceActivity" >
+        </activity>
+        <activity android:name=".CreateGeofence" >
+        </activity>
+        <activity android:name=".IntroScreen" >
+        </activity>
     </application>
 
 </manifest>

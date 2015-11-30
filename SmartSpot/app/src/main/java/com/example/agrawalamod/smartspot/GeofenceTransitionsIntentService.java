@@ -142,19 +142,24 @@ public class GeofenceTransitionsIntentService extends IntentService {
                 Log.i(TAG, "Entered Geofence");
 
 
-                Intent launchActivity3 = new Intent(this, Activity4.class);
+                /*Intent launchActivity3 = new Intent(this, Activity4.class);
                 launchActivity3.putExtra("email", intent.getStringExtra("email"));
                 launchActivity3.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(launchActivity3);
+                startActivity(launchActivity3);*/
 
 
 
             }
-            else if( geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT)
+            else if(geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT)
             {
                 System.out.println("Exited Geofence");
                 Log.i(TAG, "Exited Geofence");
-                Toast.makeText(getApplicationContext(), "Device is outside the Geofence. Waiting for Device to be in the Geofence.", Toast.LENGTH_LONG).show();
+
+                Intent launchActivity4 = new Intent(this, Activity4.class);
+                //launchActivity3.putExtra("email", intent.getStringExtra("email"));
+                launchActivity4.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(launchActivity4);
+                //Toast.makeText(getApplicationContext(), "Device is outside the Geofence. Waiting for Device to be in the Geofence.", Toast.LENGTH_LONG).show();
             }
         } else {
             // Log the error.

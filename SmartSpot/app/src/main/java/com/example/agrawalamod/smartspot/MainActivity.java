@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity
         button2.setOnClickListener(this);
 
 
+
     }
     private void onSignInClicked() {
         // User clicked the sign-in button, so begin the sign-in process and automatically
@@ -155,10 +156,10 @@ public class MainActivity extends AppCompatActivity
             System.out.println(email);
             if(isIIITD)
             {
-                System.out.println("Starting Activity 2");
-                Intent intent = new Intent(this, Activity2.class);
-                //intent.putExtra("email",email);
-                startActivity(intent);
+                System.out.println("Starting Geofence Activity");
+                Intent i = new Intent(this, IntroScreen.class);
+                startActivity(i);
+
             }
             else
             {
